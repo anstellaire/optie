@@ -144,7 +144,7 @@ namespace optie {
         template<typename F>
         T or_call(F handler) && {
             if (is_err())
-                return handler();
+                return handler(*_storage_get<E>());
 
             return std::move(*_storage_get<T>());
         }
@@ -152,7 +152,7 @@ namespace optie {
         template<typename F>
         T or_call(F handler) & {
             if (is_err())
-                return handler();
+                return handler(*_storage_get<E>());
 
             return *_storage_get<T>();
         }
