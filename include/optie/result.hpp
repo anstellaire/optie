@@ -14,7 +14,7 @@ namespace optie {
     // -------------------------------------------------------------------------
 
     template<typename T, typename E>
-    struct result {
+    class result {
 
     private: // data members ---------------------------------------------------
 
