@@ -113,14 +113,14 @@ namespace optie {
 
     public: // get value methods -----------------------------------------------
 
-        T&& or_exit(char const* message) && {
+        T&& or_exit(char const* message = NULL) && {
             if (is_err())
                 helper::exit_handler{message}();
 
             return std::move(*_storage_get<T>());
         }
 
-        T& or_exit(char const* message) & {
+        T& or_exit(char const* message = NULL) & {
             if (is_err())
                 helper::exit_handler{message}();
 
