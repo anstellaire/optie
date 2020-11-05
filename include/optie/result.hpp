@@ -127,14 +127,14 @@ namespace optie {
             return *_storage_get<T>();
         }
 
-        T&& or_default(T&& value) && {
+        T/*&&*/ or_default(T/*&&*/ value) && {
             if (is_err())
                 return std::move(value);
 
             return std::move(*_storage_get<T>());
         }
 
-        T& or_default(T& value) & {
+        T/*&*/ or_default(T/*&*/ value) & {
             if (is_err())
                 return value;
 
