@@ -1,5 +1,5 @@
-#ifndef ENN_OPTIE_RESULT_HPP
-#define ENN_OPTIE_RESULT_HPP
+#ifndef ENN_OPTIE_OPTION_HPP
+#define ENN_OPTIE_OPTION_HPP
 
 #include "details/details.hpp"
 
@@ -12,57 +12,55 @@ namespace optie {
     //   TAG TYPE CONSTRUCTORS
     // -------------------------------------------------------------------------
 
+    template<typename V>
+    details::some_type<V&&> some(V&& value) {
+        return details::some_type<V&&>{std::forward<V>(value)};
+    }
+
+    details::none_type none() {
+        return details::none_type{};
+    }
+
+    // -------------------------------------------------------------------------
+    //   OPTION
+    // -------------------------------------------------------------------------
+
     template<typename T>
-    details::ok_type<T&&> ok(T&& value) {
-        return details::ok_type<T&&>{std::forward<T>(value)};
-    }
-
-    template<typename E>
-    details::err_type<E&&> err(E&& value) {
-        return details::err_type<E&&>{std::forward<E>(value)};
-    }
-
-    // -------------------------------------------------------------------------
-    //   RESULT
-    // -------------------------------------------------------------------------
-
-    template<typename T, typename E>
-    class result {
+    class option {
 
         static_assert(
-            !std::is_reference<T>::value && !std::is_reference<E>::value,
-            "&, && are not supported for T, E in result<T, E>");
+            !std::is_reference<T>::value,
+            "&, && are not supported for T in option<T>");
         static_assert(
-            !std::is_same<T, void>::value && !std::is_same<E, void>::value,
-            "void is not supported for T, E in result<T, E>");
+            !std::is_same<T, void>::value,
+            "void is not supported for T in option<T>");
 
     private: // data members ---------------------------------------------------
 
-        details::helpers::copy_adapter<details::result_impl<T, E>> storage_;
+        details::helpers::copy_adapter<details::option_impl<T>> storage_;
 
     public: // special methods -------------------------------------------------
 
         template<typename V, details::helpers::enable_if_convertible<V, T> = 0>
-        result(details::ok_type<V>&& ok) : storage_(std::move(ok)) {};
+        option<T>(details::some_type<V>&& some) : storage_(std::move(some)) {};
 
-        template<typename V, details::helpers::enable_if_convertible<V, E> = 0>
-        result(details::err_type<V>&& err) : storage_(std::move(err)) {};
+        option<T>(details::none_type const&) : storage_() {};
 
     public: // user api --------------------------------------------------------
 
-        bool is_ok() const {
-            return storage_.adaptee().is_ok();
+        bool is_some() const {
+            return storage_.adaptee().is_some();
         }
 
         T&& or_exit(char const* message = NULL) && {
-            if (!is_ok())
+            if (!is_some())
                 details::helpers::print_and_exit(message);
 
             return std::move(*storage_.adaptee().value());
         }
 
         T& or_exit(char const* message = NULL) & {
-            if (!is_ok())
+            if (!is_some())
                 details::helpers::print_and_exit(message);
 
             return *storage_.adaptee().value();
@@ -71,4 +69,4 @@ namespace optie {
 
 } // namespace optie
 
-#endif // ENN_OPTIE_RESULT_HPP
+#endif // ENN_OPTIE_OPTION_HPP
