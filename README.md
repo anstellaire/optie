@@ -7,19 +7,23 @@ Here is an example:
 ```cpp
 #include <optie/result.hpp>
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 // A function that may fail during execution
 
-optie::result<string, char const*> read_content(char const* fname) {
+optie::result<std::string, char const*> read_content(char const* fname) {
     if (!fname)
         return optie::err("bad argument");
 
-    ifstream file(fname, ios_base::in);
+    std::ifstream file(fname, std::ios_base::in);
 
     if (!file.good())
         return optie::err("file open failed");
 
-    string content;
-    ostringstream sstream;
+    std::string content;
+    std::ostringstream sstream;
     sstream << file.rdbuf();
     content = sstream.str();
 
@@ -30,16 +34,18 @@ optie::result<string, char const*> read_content(char const* fname) {
 Then we can get the function result using one of the following methods:
 
 ```cpp
-string s = read_content("nonexistent.txt").or_default("I'm a default string");
+std::string s = read_content("nonexistent.txt")
+    .or_default("I'm a default string");
 ```
 
 ```cpp
-string s = read_content("nonexistent.txt").or_call([](char const* err) {
-    cerr << "Error from λ: " << err << endl;
+std::string s = read_content("nonexistent.txt").or_call([](char const* err) {
+    std::cerr << "Error from λ: " << err << std::endl;
     return "I'm a default string from λ";
 });
 ```
 
 ```cpp
-string s = read_content("nonexistent.txt").or_exit("Error from exit message");
+std::string s = read_content("nonexistent.txt")
+    .or_exit("Error from exit message");
 ```
