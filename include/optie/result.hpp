@@ -67,6 +67,39 @@ namespace optie {
 
             return *storage_.adaptee().value();
         }
+
+        template<typename F>
+        T or_call(F callback) && {
+            if (!is_ok())
+                return callback(std::move(*storage_.adaptee().error()));
+
+            return std::move(*storage_.adaptee().value());
+        }
+
+        template<typename F>
+        T or_call(F callback) & {
+            if (!is_ok())
+                return callback(*storage_.adaptee().value());
+
+            return *storage_.adaptee().value();
+        }
+
+        template<typename V, details::helpers::enable_if_convertible<V, T> = 0>
+        T or_default(V&& value) && {
+            if (!is_ok())
+                return std::forward<V>(value);
+
+            return std::move(*storage_.adaptee().value());
+        }
+
+        template<typename V, details::helpers::enable_if_convertible<V, T> = 0>
+        T or_default(V&& value) & {
+            if (!is_ok())
+                return std::forward<V>(value);
+
+            return *storage_.adaptee().value();
+        }
+
     };
 
 } // namespace optie
