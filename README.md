@@ -1,8 +1,6 @@
 # Optie
 
-Optie is a tiny C++ library that provides a rust-like `optie::result<T,E>` class to return successful values / errors of different types in a unified way.
-
-It can be used to replace exceptions where they are undesired.
+Optie is a tiny C++11 library that provides rust-like `optie::result<T,E>` and `optie::option<T>` classes. The `optie::result<T,E>` class can be used to return successful values / errors of different types in a unified way. It can be used to replace exceptions where they are undesired. The `optie::option<T>` class is a `std::optional<T>`-like class with rust-like api interface.
 
 Here is an example:
 
