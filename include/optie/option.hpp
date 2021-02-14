@@ -44,7 +44,7 @@ namespace optie {
         template<typename V, details::helpers::enable_if_convertible<V, T> = 0>
         option<T>(details::some_type<V>&& some) : storage_(std::move(some)) {};
 
-        option<T>(details::none_type const&) : storage_() {};
+        option<T>(details::none_type&& none) : storage_(std::move(none)) {};
 
     public: // user api --------------------------------------------------------
 
